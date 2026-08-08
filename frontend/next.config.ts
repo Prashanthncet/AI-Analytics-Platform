@@ -2,7 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async rewrites() {
-    const backend = process.env.BACKEND_URL || "http://localhost:5000";
+    let backend = process.env.BACKEND_URL || "http://localhost:5000";
+    if (!backend.startsWith("http://") && !backend.startsWith("https://")) {
+      backend = `https://${backend}`;
+    }
     return [
       {
         source: "/api/:path*",
