@@ -1,0 +1,37 @@
+# Render Blueprint — deploys the AI Analytics backend as a public web service.
+# Push this repo to GitHub, then create a "Blueprint" in Render pointing at the repo.
+# Render will create the service below and prompt you for the sync:false env values.
+services:
+  - type: web
+    name: ai-analytics-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: node dist/server.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Render injects PORT automatically; this keeps it explicit.
+      - key: PORT
+        value: 10000
+      # MongoDB connection string — create a free MongoDB Atlas cluster and paste it here.
+      - key: MONGO_URI
+        sync: false
+      # Long random strings — required in production (server refuses to start without them).
+      - key: JWT_SECRET
+        sync: false
+      - key: ENCRYPTION_KEY
+        sync: false
+      # Admin login for the deployed dashboard.
+      - key: ADMIN_EMAIL
+        value: admin@corp.com
+      - key: ADMIN_PASSWORD
+        sync: false
+      # Uptime monitor polling interval (ms).
+      - key: MONITOR_INTERVAL_MS
+        value: 60000
+      # Seed the admin account + real projects/products/deployments on first boot (idempotent).
+      - key: AUTO_SEED
+        value: "true"
